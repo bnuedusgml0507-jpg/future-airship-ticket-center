@@ -312,6 +312,19 @@
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
     }
+    .idea-panel { max-width: 920px; margin: 0 auto; padding: clamp(22px, 4vw, 38px); border: 1px solid var(--line); border-radius: 24px; background: linear-gradient(135deg, #f3faff, #fff 68%); box-shadow: var(--shadow); }
+    .idea-form { display: grid; grid-template-columns: 190px 1fr auto; gap: 12px; align-items: stretch; margin-top: 24px; }
+    .idea-form select, .idea-form textarea { width: 100%; min-height: 54px; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; color: var(--ink); background: #fff; font: inherit; }
+    .idea-form textarea { min-height: 54px; max-height: 160px; resize: vertical; }
+    .idea-form .btn { white-space: nowrap; }
+    .idea-note { margin: 12px 0 0; color: var(--muted); font-size: .84rem; line-height: 1.6; }
+    .idea-list { display: grid; gap: 10px; margin-top: 22px; }
+    .idea-item { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; padding: 16px 18px; border: 1px solid var(--line); border-radius: 16px; background: #fff; }
+    .idea-item p { margin: 5px 0 0; line-height: 1.55; overflow-wrap: anywhere; }
+    .idea-item small { color: var(--muted); }
+    .idea-remove { border: 0; padding: 5px 8px; color: var(--muted); background: transparent; cursor: pointer; }
+    .idea-empty { margin: 0; color: var(--muted); font-size: .92rem; }
+    @media (max-width: 680px) { .idea-form { grid-template-columns: 1fr; } .idea-form .btn { width: 100%; } }
   </style>
 </head>
 <body>
@@ -322,6 +335,7 @@
         <a href="#intro">비행선 소개</a>
         <a href="#experiences">즐길 거리</a>
         <a href="#tickets">탑승권</a>
+        <a href="#ideas">아이디어 제안</a>
       </div>
       <a class="nav-cart" href="#cart">🛒 장바구니 <span id="navCount">0</span></a>
     </nav>
@@ -478,6 +492,30 @@
         </article>
       </div>
     </section>
+    <section class="section" id="ideas">
+      <div class="section-heading">
+        <div class="kicker">YOUR IDEAS, OUR SKY</div>
+        <h2>하늘 여행에 더해졌으면 하는 아이디어가 있나요?</h2>
+        <p>비행선에서 즐기고 싶은 시설이나 서비스, 더 편안하고 안전한 여행을 위한 생각을 들려주세요.</p>
+      </div>
+      <div class="idea-panel">
+        <form class="idea-form" id="ideaForm">
+          <label class="sr-only" for="ideaCategory">아이디어 분야</label>
+          <select id="ideaCategory" aria-label="아이디어 분야">
+            <option value="시설">시설 아이디어</option>
+            <option value="서비스">서비스 아이디어</option>
+            <option value="안전·편의">안전·편의 아이디어</option>
+            <option value="기타">기타 아이디어</option>
+          </select>
+          <label class="sr-only" for="ideaText">제안할 아이디어</label>
+          <textarea id="ideaText" maxlength="200" rows="1" placeholder="예: 창가 좌석에서 별자리를 볼 수 있는 안내 화면이 있으면 좋겠어요." required></textarea>
+          <button class="btn btn-primary" type="submit">아이디어 제안하기</button>
+        </form>
+        <p class="idea-note">아이디어는 이 기기의 브라우저에만 저장됩니다. 현재는 방문자 의견을 운영자에게 전송하거나 여러 사람과 공유하지 않습니다. 개인정보는 입력하지 말아 주세요.</p>
+        <div class="idea-list" id="ideaList" aria-live="polite"></div>
+      </div>
+    </section>
+
   </main>
 
   <footer><strong>SKY AIRSHIP</strong> · 하늘 위에서 만나는 새로운 여행 · 탑승권 가격은 예시입니다.</footer>
@@ -596,6 +634,66 @@
     document.getElementById('orderDialog').addEventListener('click', event => {
       if (event.target === event.currentTarget) event.currentTarget.close();
     });
+
+    const ideaStorageKey = 'sky-airship-ideas-v1';
+    const ideaForm = document.getElementById('ideaForm');
+    const ideaList = document.getElementById('ideaList');
+
+    function getIdeas() {
+      try { return JSON.parse(localStorage.getItem(ideaStorageKey) || '[]'); }
+      catch (_) { return []; }
+    }
+
+    function renderIdeas() {
+      const ideas = getIdeas();
+      ideaList.replaceChildren();
+      if (!ideas.length) {
+        const empty = document.createElement('p');
+        empty.className = 'idea-empty';
+        empty.textContent = '아직 등록된 아이디어가 없어요. 첫 번째 의견을 남겨주세요!';
+        ideaList.append(empty);
+        return;
+      }
+      ideas.slice().reverse().forEach(idea => {
+        const card = document.createElement('article');
+        card.className = 'idea-item';
+        const body = document.createElement('div');
+        const category = document.createElement('small');
+        category.textContent = idea.category;
+        const text = document.createElement('p');
+        text.textContent = idea.text;
+        body.append(category, text);
+        const remove = document.createElement('button');
+        remove.className = 'idea-remove';
+        remove.type = 'button';
+        remove.textContent = '삭제';
+        remove.setAttribute('aria-label', '내 아이디어 삭제');
+        remove.addEventListener('click', () => {
+          localStorage.setItem(ideaStorageKey, JSON.stringify(getIdeas().filter(item => item.id !== idea.id)));
+          renderIdeas();
+        });
+        card.append(body, remove);
+        ideaList.append(card);
+      });
+    }
+
+    ideaForm.addEventListener('submit', event => {
+      event.preventDefault();
+      const text = document.getElementById('ideaText').value.trim();
+      if (!text) return;
+      const ideas = getIdeas();
+      ideas.push({
+        id: window.crypto && crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
+        category: document.getElementById('ideaCategory').value,
+        text
+      });
+      localStorage.setItem(ideaStorageKey, JSON.stringify(ideas));
+      ideaForm.reset();
+      renderIdeas();
+      showToast('아이디어를 이 기기의 브라우저에 저장했어요.');
+    });
+
+    renderIdeas();
 
     renderCart();
   </script>
