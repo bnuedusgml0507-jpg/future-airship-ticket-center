@@ -421,6 +421,76 @@
         display: none;
       }
     }
+      /* 그림 중심 레이아웃 */
+    .hero-illustration {
+      max-width: 1040px;
+      margin: 1.35rem auto 0;
+      padding: 0 1.2rem;
+      text-align: center;
+    }
+    .hero-illustration img {
+      display: block;
+      width: min(100%, 900px);
+      height: auto;
+      margin: 0 auto;
+      border: 4px solid rgba(255,255,255,.92);
+      border-radius: 22px;
+      box-shadow: 0 20px 48px rgba(3, 105, 161, .2);
+    }
+    .hero-illustration figcaption {
+      margin: .8rem auto 0;
+      color: var(--text-muted);
+      font-size: .92rem;
+    }
+    .visual-break {
+      margin: 1.8rem 0 2rem;
+      overflow: hidden;
+      border: 1px solid #bfdbfe;
+      border-radius: 18px;
+      background: #dbeafe;
+      box-shadow: var(--shadow);
+    }
+    .visual-break img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 2.35 / 1;
+      object-fit: cover;
+    }
+    .visual-break figcaption {
+      padding: .65rem 1rem;
+      color: #334155;
+      background: rgba(255,255,255,.94);
+      font-size: .88rem;
+      text-align: center;
+    }
+    .card { overflow: hidden; }
+    .card-art {
+      display: block;
+      width: calc(100% + 3rem);
+      height: 174px;
+      object-fit: cover;
+      margin: -1.5rem -1.5rem 1rem;
+      border-bottom: 1px solid #dbeafe;
+    }
+    .tech-card-art {
+      display: block;
+      width: calc(100% + 3rem);
+      height: 155px;
+      object-fit: cover;
+      margin: -1.5rem -1.5rem 1rem;
+      border-bottom: 1px solid #dbeafe;
+    }
+    @media (max-width: 680px) {
+      .hero-illustration { padding: 0 .75rem; margin-top: .8rem; }
+      .hero-illustration img { border-width: 2px; border-radius: 14px; }
+      .visual-break { border-radius: 12px; }
+      .visual-break img { aspect-ratio: 1.65 / 1; }
+      .card-art { height: 150px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .tab-content { animation: none; }
+      .tab-btn { transition: none; }
+    }
   </style>
 </head>
 <body>
@@ -430,13 +500,16 @@
     <h1>미래형 전기 열기구 비행선</h1>
     <p>하늘 위의 종합 엔터테인먼트 공간 탐구 & 가상 발권 센터</p>
   </header>
-
+  <figure class="hero-illustration">
+    <img src="airship-overview.png" alt="스카이 시네마, 미니 동물원, 워터파크와 비행선의 추진·에너지·안전 설계를 한눈에 보여주는 미래형 전기 열기구 비행선 인포그래픽" fetchpriority="high">
+    <figcaption>비행선의 시설과 발명 기술을 원본 그림에서 먼저 살펴보세요.</figcaption>
+  </figure>
   <div class="container">
     <!-- 상단 탭 -->
     <div class="nav-tabs">
-      <button class="tab-btn active" onclick="switchTab('facilities')">🔍 발명 구조 & 시설 탐구</button>
-      <button class="tab-btn" onclick="switchTab('tickets')">🎟️ 할인권 & 가상 탑승권 발권</button>
-      <button class="tab-btn" onclick="switchTab('lab')">💡 발명 원리 퀴즈 & 아이디어</button>
+      <button class="tab-btn active" onclick="switchTab('facilities', this)">🔍 발명 구조 & 시설 탐구</button>
+      <button class="tab-btn" onclick="switchTab('tickets', this)">🎟️ 할인권 & 가상 탑승권 발권</button>
+      <button class="tab-btn" onclick="switchTab('lab', this)">💡 발명 원리 퀴즈 & 아이디어</button>
     </div>
 
     <!-- TAB 1: 발명 구조 & 시설 탐구 -->
@@ -449,6 +522,7 @@
       <div class="grid-3">
         <!-- 미니 동물원 -->
         <div class="card">
+          <img class="card-art" src="facility-zoo.jpg" alt="비행선 안의 미니 동물원과 기린, 코끼리, 판다" loading="lazy">
           <div class="card-header-icon">🦒</div>
           <span class="scamper-badge">SCAMPER: 결합 (Combine)</span>
           <h3 class="card-title">스카이 미니 동물원</h3>
@@ -462,6 +536,7 @@
 
         <!-- 스카이 시네마 -->
         <div class="card">
+          <img class="card-art" src="facility-cinema.jpg" alt="비행선 안의 스카이 시네마 객석과 대형 화면" loading="lazy">
           <div class="card-header-icon">🎬</div>
           <span class="scamper-badge">SCAMPER: 다른 용도로 쓰기 (Put to other use)</span>
           <h3 class="card-title">스카이 시네마 (4D)</h3>
@@ -475,6 +550,7 @@
 
         <!-- 워터파크 -->
         <div class="card">
+          <img class="card-art" src="facility-waterpark.jpg" alt="비행선 안의 워터파크와 물놀이 시설" loading="lazy">
           <div class="card-header-icon">🌊</div>
           <span class="scamper-badge">SCAMPER: 변형 & 확장 (Modify)</span>
           <h3 class="card-title">구름 위 실내 워터파크</h3>
@@ -492,12 +568,14 @@
         <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">⚙️ 숨겨진 미래 공학 핵심 발명</h3>
         <div class="grid-2">
           <div class="card">
+            <img class="tech-card-art" src="propulsion-engine.jpg" alt="비행선의 360도 방향 전환을 돕는 전기 덕트 팬" loading="lazy">
             <h4 style="font-weight: 700; margin-bottom: 0.3rem;">🔋 친환경 전기 추진 & 배터리 시스템</h4>
             <p style="color: var(--text-muted); font-size: 0.9rem;">
               화석연료 대신 태양광 패널과 고용량 리튬 배터리를 탑재해 소음과 탄소 배출이 없습니다. 360° 회전식 덕트 팬으로 제자리 유턴과 정밀 비행이 가능합니다.
             </p>
           </div>
           <div class="card">
+            <img class="tech-card-art" src="safety-systems.jpg" alt="구명보트와 응급 의료 장비를 보여주는 안전 시스템" loading="lazy">
             <h4 style="font-weight: 700; margin-bottom: 0.3rem;">🦺 3중 복합 안전 & 비상 탈출 시스템</h4>
             <p style="color: var(--text-muted); font-size: 0.9rem;">
               가볍고 질긴 초고강도 섬유 외피로 파손 위험을 줄였으며, 비상시 분리되는 독립형 구명보트와 전기식 리프트 캡슐로 승객의 안전을 지킵니다.
@@ -513,6 +591,11 @@
         <h2 style="font-size: 1.5rem; font-weight: 800;">탑승권 & 특별 체험 할인권 발권기</h2>
         <p style="color: var(--text-muted); font-size: 0.95rem;">학생 정보를 입력하고 비행선 내 원하는 시설의 할인권을 즉시 발권해 보세요!</p>
       </div>
+
+      <figure class="visual-break">
+        <img src="cabin-seating.jpg" alt="비행선 내부의 위아래 객실과 승객 좌석" loading="lazy">
+        <figcaption>파노라마 객실을 둘러보고 나만의 탑승권을 만들어 보세요.</figcaption>
+      </figure>
 
       <div class="ticket-creator-panel">
         <!-- 티켓 설정 폼 -->
@@ -610,6 +693,11 @@
         <p style="color: var(--text-muted); font-size: 0.95rem;">비행선의 과학 원리를 복습하고, 나만의 새로운 시설을 추가해 보세요.</p>
       </div>
 
+      <figure class="visual-break">
+        <img src="blueprint-design.jpg" alt="비행선의 길이와 폭을 표시한 청사진 설계도" loading="lazy">
+        <figcaption>청사진을 보고 비행선의 형태와 구조를 떠올려 보세요.</figcaption>
+      </figure>
+
       <div class="grid-2">
         <!-- 퀴즈 1 -->
         <div class="quiz-box">
@@ -659,11 +747,11 @@
 
   <script>
     // 탭 전환 로직
-    function switchTab(tabId) {
+    function switchTab(tabId, button) {
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
 
-      event.target.classList.add('active');
+      button.classList.add('active');
       document.getElementById(tabId).classList.add('active');
     }
 
@@ -758,3 +846,5 @@
   </script>
 </body>
 </html>
+
+
